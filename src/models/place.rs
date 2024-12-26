@@ -1,11 +1,10 @@
-
 use serde::{Deserialize, Serialize};
 use reqwest;
 use nanoid::nanoid;
 use crate::utils::alphabet::ALPHANUMERIC;
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Place {
     pub place_id: u32,
     pub display_name: String,
