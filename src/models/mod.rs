@@ -1,3 +1,3 @@
-pub mod city; 
+pub mod place; 
 pub mod weather;
 pub mod news;

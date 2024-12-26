@@ -1,9 +1,10 @@
 mod models;
 
-use models::city::City  ;
+use models::place::Place;
+use models::place::PlaceType;
 
 fn main() {
-    match City::get_by_name("San Diego") {
+    match Place::get_by_name("San Diego", PlaceType::City) {
         Ok(cities) => println!("{:#?}", cities),
         Err(e) => println!("Error: {}", e),
     }
