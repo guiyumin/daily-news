@@ -1,5 +1,9 @@
+
 use serde::{Deserialize, Serialize};
 use reqwest;
+use nanoid::nanoid;
+use crate::utils::alphabet::ALPHANUMERIC;
+
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Place {
@@ -14,6 +18,8 @@ pub enum PlaceType {
     City,
     Zipcode,
 }
+
+
 
 impl Place {
     pub fn get_by_name(name: &str, addresstype: PlaceType) -> Result<Vec<Place>, reqwest::Error> {
@@ -31,7 +37,7 @@ impl Place {
         let client = reqwest::blocking::Client::new();
         let response = client
             .get(&url)
-            .header("User-Agent", "DailyNews/1.0")
+            .header("User-Agent", format!("DailyNews/1.0 User/{}", nanoid!(12, &ALPHANUMERIC)))
             .send()?;
 
         let places: Vec<Place> = response.json()?;

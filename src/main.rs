@@ -1,7 +1,4 @@
-mod models;
-
-use models::place::Place;
-use models::place::PlaceType;
+use daily_news::models::place::{Place, PlaceType};
 
 fn main() {
     match Place::get_by_name("San Diego", PlaceType::City) {
