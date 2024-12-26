@@ -22,8 +22,8 @@ pub enum PlaceType {
 
 
 impl Place {
-    pub fn get_by_name(name: &str, addresstype: PlaceType) -> Result<Vec<Place>, reqwest::Error> {
-        let search_string = match addresstype {
+    pub fn get_by_name(name: &str, place_type: PlaceType) -> Result<Vec<Place>, reqwest::Error> {
+        let search_string = match place_type {
             PlaceType::City => {
                 name.to_string()
             }
