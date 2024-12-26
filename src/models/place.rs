@@ -14,25 +14,12 @@ pub struct Place {
     pub lon: String,
 }
 
-pub enum PlaceType {
-    City,
-    Zipcode,
-}
-
 
 
 impl Place {
-    pub fn get_by_name(name: &str, place_type: PlaceType) -> Result<Vec<Place>, reqwest::Error> {
-        let search_string = match place_type {
-            PlaceType::City => {
-                name.to_string()
-            }
-            PlaceType::Zipcode => {
-                format!("{},US", name)
-            }
-        };
+    pub fn get_by_name(name: &str) -> Result<Vec<Place>, reqwest::Error> {
 
-        let url = format!("https://nominatim.openstreetmap.org/search.php?q={}&format=jsonv2", search_string);
+        let url = format!("https://nominatim.openstreetmap.org/search.php?q={}&format=jsonv2", name);
      
         let client = reqwest::blocking::Client::new();
         let response = client
