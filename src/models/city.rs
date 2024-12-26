@@ -13,7 +13,7 @@ pub struct City {
 }
 
 impl City {
-    pub fn get_by_name(name: String) -> Result<Vec<City>, reqwest::Error> {
+    pub fn get_by_name(name: &str) -> Result<Vec<City>, reqwest::Error> {
         let url = format!("https://nominatim.openstreetmap.org/search.php?q={}&format=jsonv2", name);
      
         let client = reqwest::blocking::Client::new();
