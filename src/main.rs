@@ -1,31 +1,53 @@
-use daily_news::models::place::Place;
 use daily_news::models::cache::Cache;
-
+use daily_news::models::place::Place;
+use std::io;
 fn main() {
+    // load cache from file or create new if not exists
     let mut cache = Cache::load();
-    
-    let (name, place_id) = match Place::get_place_info_from_cache(&cache) {
-        Some((name, id)) => (name, id),
-        None => match Place::get_valid_place(&mut cache) {
-            Some(place) => {
-                // Update cache with all place information
-                let name = place.name.clone();
-                let id = place.place_id;
-                cache.last_place = Some(place.name);
-                cache.last_display_name = Some(place.display_name);
-                cache.last_place_id = Some(place.place_id);
-                cache.last_lat = Some(place.lat);
-                cache.last_lon = Some(place.lon);
-                cache.save();
-                (name, id)
-            }
-            None => {
-                println!("No place selected. Exiting.");
-                return;
+
+    let cached_place = cache.retrieve_place();
+
+    let mut need_input = false;
+
+    // if no place found in cache, we request user input
+    if !cached_place.is_some() {
+        println!("No place found in cache");
+        need_input = true;
+    }
+
+    // if place found in cache, we ask user if they want to use it
+    if !need_input {
+        let cached_place: Place = cached_place.unwrap();
+        println!("Place found in cache: {}", cached_place.display_name);
+        println!("Would you like to use the cached place? (Enter=yes/n): ");
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).unwrap();
+        if input.trim().is_empty() || !input.trim().eq_ignore_ascii_case("n") {
+            println!("Using cached place: {}", cached_place.display_name);
+        } else {
+            // if user does not want to use cached place, we request user input
+            need_input = true;
+        }
+    }
+
+    if need_input {
+        loop {
+            println!("Please enter a place name: ");
+            let mut input = String::new();
+            io::stdin().read_line(&mut input).unwrap();
+            let place_name = input.trim();
+            let places = Place::query_by_name(place_name).unwrap();
+
+            if !places.is_empty() {
+                let place = Place::select(&places);
+
+                cache.update(place);
+                break;
+            } else {
+                println!("No places found with that name. Please try again.");
             }
         }
-    };
+    }
 
-    println!("\nUsing place '{}' with ID: {}", name, place_id);
     // Now you can use name and place_id for weather and news queries
 }

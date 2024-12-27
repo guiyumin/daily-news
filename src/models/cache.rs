@@ -1,8 +1,8 @@
+use crate::models::place::Place;
 use nanoid::nanoid;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
-use crate::models::place::Place;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Cache {
@@ -17,7 +17,7 @@ pub struct Cache {
 impl Cache {
     pub fn load() -> Self {
         let cache_file = Self::get_cache_path();
-        
+
         if cache_file.exists() {
             let contents = fs::read_to_string(&cache_file).unwrap_or_default();
             serde_json::from_str(&contents).unwrap_or_else(|_| Self::init())
@@ -33,6 +33,16 @@ impl Cache {
         if let Ok(contents) = serde_json::to_string_pretty(self) {
             let _ = fs::write(cache_file, contents);
         }
+    }
+
+    pub fn update(&mut self, place: &Place) {
+        self.last_place = Some(place.name.clone());
+        self.last_display_name = Some(place.display_name.clone());
+        self.last_place_id = Some(place.place_id);
+        self.last_lat = Some(place.lat.clone());
+        self.last_lon = Some(place.lon.clone());
+        self.save();
+        println!("Cache updated: {}", place.display_name);
     }
 
     fn init() -> Self {
@@ -54,8 +64,14 @@ impl Cache {
         path
     }
 
-    pub fn to_place(&self) -> Option<Place> {
-        match (&self.last_place, &self.last_place_id, &self.last_lat, &self.last_lon, &self.last_display_name) {
+    pub fn retrieve_place(&self) -> Option<Place> {
+        match (
+            &self.last_place,
+            &self.last_place_id,
+            &self.last_lat,
+            &self.last_lon,
+            &self.last_display_name,
+        ) {
             (Some(name), Some(id), Some(lat), Some(lon), Some(display_name)) => Some(Place {
                 place_id: *id,
                 name: name.clone(),
@@ -66,4 +82,4 @@ impl Cache {
             _ => None,
         }
     }
-} 
+}
