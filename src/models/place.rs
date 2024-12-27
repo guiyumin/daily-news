@@ -1,4 +1,5 @@
 use crate::utils::alphabet::ALPHANUMERIC;
+use crate::utils::urls::OPENSTREETMAP_SEARCH_URL;
 use nanoid::nanoid;
 use reqwest;
 use serde::{Deserialize, Serialize};
@@ -15,10 +16,7 @@ pub struct Place {
 
 impl Place {
     pub fn query_by_name(name: &str) -> Result<Vec<Place>, reqwest::Error> {
-        let url = format!(
-            "https://nominatim.openstreetmap.org/search.php?q={}&format=jsonv2",
-            name
-        );
+        let url = format!("{}?q={}&format=jsonv2", OPENSTREETMAP_SEARCH_URL, name);
 
         let client = reqwest::blocking::Client::new();
         let response = client

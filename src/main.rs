@@ -32,7 +32,7 @@ fn main() {
 
     if need_input {
         loop {
-            println!("Please enter a place name: ");
+            println!("Please enter a place name or zip code: ");
             let mut input = String::new();
             io::stdin().read_line(&mut input).unwrap();
             let place_name = input.trim();
