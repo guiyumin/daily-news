@@ -5,13 +5,18 @@ use std::fs;
 use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct CachedPlace {
+    pub name: Option<String>,
+    pub display_name: Option<String>,
+    pub place_id: Option<u32>,
+    pub lat: Option<String>,
+    pub lon: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Cache {
     pub user_id: String,
-    pub last_place: Option<String>,
-    pub last_display_name: Option<String>,
-    pub last_place_id: Option<u32>,
-    pub last_lat: Option<String>,
-    pub last_lon: Option<String>,
+    pub place: CachedPlace,
 }
 
 impl Cache {
@@ -36,11 +41,11 @@ impl Cache {
     }
 
     pub fn update(&mut self, place: &Place) {
-        self.last_place = Some(place.name.clone());
-        self.last_display_name = Some(place.display_name.clone());
-        self.last_place_id = Some(place.place_id);
-        self.last_lat = Some(place.lat.clone());
-        self.last_lon = Some(place.lon.clone());
+        self.place.name = Some(place.name.clone());
+        self.place.display_name = Some(place.display_name.clone());
+        self.place.place_id = Some(place.place_id);
+        self.place.lat = Some(place.lat.clone());
+        self.place.lon = Some(place.lon.clone());
         self.save();
         println!("Cache updated: {}", place.display_name);
     }
@@ -48,11 +53,13 @@ impl Cache {
     fn init() -> Self {
         Self {
             user_id: nanoid!(),
-            last_place: None,
-            last_display_name: None,
-            last_place_id: None,
-            last_lat: None,
-            last_lon: None,
+            place: CachedPlace {
+                name: None,
+                display_name: None,
+                place_id: None,
+                lat: None,
+                lon: None,
+            },
         }
     }
 
@@ -78,11 +85,11 @@ impl Cache {
 
     pub fn retrieve_place(&self) -> Option<Place> {
         match (
-            &self.last_place,
-            &self.last_place_id,
-            &self.last_lat,
-            &self.last_lon,
-            &self.last_display_name,
+            &self.place.name,
+            &self.place.place_id,
+            &self.place.lat,
+            &self.place.lon,
+            &self.place.display_name,
         ) {
             (Some(name), Some(id), Some(lat), Some(lon), Some(display_name)) => Some(Place {
                 place_id: *id,
