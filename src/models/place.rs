@@ -5,13 +5,13 @@ use reqwest;
 use serde::{Deserialize, Serialize};
 use std::io::{self, Write};
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Place {
-    pub place_id: u32,
-    pub display_name: String,
-    pub name: String,
-    pub lat: String,
-    pub lon: String,
+    pub place_id: Option<u32>,
+    pub name: Option<String>,
+    pub display_name: Option<String>,
+    pub lat: Option<String>,
+    pub lon: Option<String>,
 }
 
 impl Place {
@@ -35,7 +35,7 @@ impl Place {
         println!("\nFound multiple places. Please select one:");
 
         for (i, place) in places.iter().enumerate() {
-            println!("{}. {}", i + 1, place.display_name);
+            println!("{}. {}", i + 1, place.display_name.as_deref().unwrap_or(""));
         }
 
         loop {

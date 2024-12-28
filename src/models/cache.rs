@@ -1,29 +1,15 @@
 use crate::models::place::Place;
+use crate::models::weather::Weather;
 use nanoid::nanoid;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug, Default)]
-pub struct CachedPlace {
-    pub name: Option<String>,
-    pub display_name: Option<String>,
-    pub place_id: Option<u32>,
-    pub lat: Option<String>,
-    pub lon: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Default)]
-pub struct CachedWeather {
-    pub temperature: Option<String>,
-    pub wind_speed: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
 pub struct Cache {
     pub user_id: String,
-    pub place: CachedPlace,
-    pub weather: CachedWeather,
+    pub place: Place,
+    pub weather: Weather,
 }
 
 impl Cache {
@@ -48,20 +34,23 @@ impl Cache {
     }
 
     pub fn update_place(&mut self, place: &Place) {
-        self.place.name = Some(place.name.clone());
-        self.place.display_name = Some(place.display_name.clone());
-        self.place.place_id = Some(place.place_id);
-        self.place.lat = Some(place.lat.clone());
-        self.place.lon = Some(place.lon.clone());
+        self.place.name = place.name.clone();
+        self.place.display_name = place.display_name.clone();
+        self.place.place_id = place.place_id;
+        self.place.lat = place.lat.clone();
+        self.place.lon = place.lon.clone();
         self.save();
-        println!("Cache updated: {}", place.display_name);
+        println!(
+            "Cache updated: {}",
+            place.display_name.as_deref().unwrap_or("")
+        );
     }
 
     fn init() -> Self {
         Self {
             user_id: nanoid!(),
-            place: CachedPlace::default(),
-            weather: CachedWeather::default(),
+            place: Place::default(),
+            weather: Weather::default(),
         }
     }
 
@@ -94,11 +83,11 @@ impl Cache {
             &self.place.display_name,
         ) {
             (Some(name), Some(id), Some(lat), Some(lon), Some(display_name)) => Some(Place {
-                place_id: *id,
-                name: name.clone(),
-                display_name: display_name.clone(),
-                lat: lat.clone(),
-                lon: lon.clone(),
+                place_id: Some(*id),
+                name: Some(name.clone()),
+                display_name: Some(display_name.clone()),
+                lat: Some(lat.clone()),
+                lon: Some(lon.clone()),
             }),
             _ => None,
         }

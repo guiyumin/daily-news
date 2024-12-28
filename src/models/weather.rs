@@ -1,8 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Weather {
-    pub city: String,
     pub temperature: Vec<f64>,
     pub wind_speed: Vec<f64>,
     pub humidity: Vec<f64>,

@@ -18,12 +18,18 @@ fn main() {
     // if place found in cache, we ask user if they want to use it
     if !need_input {
         let cached_place: Place = cached_place.unwrap();
-        println!("Place found in cache: {}", cached_place.display_name);
+        println!(
+            "Place found in cache: {}",
+            cached_place.display_name.as_deref().unwrap_or("")
+        );
         println!("Would you like to use the cached place? (Enter=yes/n): ");
         let mut input = String::new();
         io::stdin().read_line(&mut input).unwrap();
         if input.trim().is_empty() || !input.trim().eq_ignore_ascii_case("n") {
-            println!("Using cached place: {}", cached_place.display_name);
+            println!(
+                "Using cached place: {}",
+                cached_place.display_name.as_deref().unwrap_or("")
+            );
         } else {
             // if user does not want to use cached place, we request user input
             need_input = true;
