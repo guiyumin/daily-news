@@ -57,8 +57,20 @@ impl Cache {
     }
 
     fn get_cache_path() -> PathBuf {
-        let mut path = dirs::config_dir().unwrap_or_else(|| PathBuf::from("."));
-        path.push("daily-news");
+        let base_path = if cfg!(windows) {
+            // On Windows, use %APPDATA% (typically C:\Users\Username\AppData\Roaming)
+            dirs::config_dir().unwrap_or_else(|| PathBuf::from("."))
+        } else {
+            // On Unix-like systems (Linux/macOS), use ~/.dailynews
+            dirs::home_dir()
+                .map(|h| h.join(".dailynews"))
+                .unwrap_or_else(|| PathBuf::from("."))
+        };
+
+        let mut path = base_path;
+        if cfg!(windows) {
+            path.push("dailynews"); // On Windows: AppData\Roaming\dailynews\
+        }
         fs::create_dir_all(&path).unwrap_or_default();
         path.push("cache.json");
         path
