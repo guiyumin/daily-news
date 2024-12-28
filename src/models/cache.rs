@@ -13,10 +13,17 @@ pub struct CachedPlace {
     pub lon: Option<String>,
 }
 
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct CachedWeather {
+    pub temperature: Option<String>,
+    pub wind_speed: Option<String>,
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Cache {
     pub user_id: String,
     pub place: CachedPlace,
+    pub weather: CachedWeather,
 }
 
 impl Cache {
@@ -54,6 +61,7 @@ impl Cache {
         Self {
             user_id: nanoid!(),
             place: CachedPlace::default(),
+            weather: CachedWeather::default(),
         }
     }
 
