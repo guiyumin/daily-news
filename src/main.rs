@@ -41,7 +41,7 @@ fn main() {
             if !places.is_empty() {
                 let place = Place::select(&places);
 
-                cache.update(place);
+                cache.update_place(&place);
                 break;
             } else {
                 println!("No places found with that name. Please try again.");

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct CachedPlace {
     pub name: Option<String>,
     pub display_name: Option<String>,
@@ -40,7 +40,7 @@ impl Cache {
         }
     }
 
-    pub fn update(&mut self, place: &Place) {
+    pub fn update_place(&mut self, place: &Place) {
         self.place.name = Some(place.name.clone());
         self.place.display_name = Some(place.display_name.clone());
         self.place.place_id = Some(place.place_id);
@@ -53,13 +53,7 @@ impl Cache {
     fn init() -> Self {
         Self {
             user_id: nanoid!(),
-            place: CachedPlace {
-                name: None,
-                display_name: None,
-                place_id: None,
-                lat: None,
-                lon: None,
-            },
+            place: CachedPlace::default(),
         }
     }
 
