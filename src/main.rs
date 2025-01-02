@@ -1,6 +1,8 @@
+use colored::Colorize;
 use daily_news::models::cache::Cache;
 use daily_news::models::place::Place;
 use std::io;
+
 fn main() {
     // load cache from file or create new if not exists
     let mut cache = Cache::load();
@@ -11,7 +13,7 @@ fn main() {
 
     // if no place found in cache, we request user input
     if !cached_place.is_some() {
-        println!("No place found in cache");
+        println!("{}", "No place found in cache".red());
         need_input = true;
     }
 
@@ -19,16 +21,21 @@ fn main() {
     if !need_input {
         let cached_place: Place = cached_place.unwrap();
         println!(
-            "Place found in cache: {}",
-            cached_place.display_name.as_deref().unwrap_or("")
+            "{}: \n{}",
+            "Place found in cache".bright_green(),
+            cached_place.display_name.as_deref().unwrap_or("").blue()
         );
-        println!("Would you like to use the cached place? (Enter=yes/n): ");
+        println!(
+            "{}",
+            "Would you like to use the cached place? (Enter=yes/n): ".yellow()
+        );
         let mut input = String::new();
         io::stdin().read_line(&mut input).unwrap();
         if input.trim().is_empty() || !input.trim().eq_ignore_ascii_case("n") {
             println!(
-                "Using cached place: {}",
-                cached_place.display_name.as_deref().unwrap_or("")
+                "{}: \n{}",
+                "Using cached place".bright_green(),
+                cached_place.display_name.as_deref().unwrap_or("").blue()
             );
         } else {
             // if user does not want to use cached place, we request user input
@@ -38,7 +45,10 @@ fn main() {
 
     if need_input {
         loop {
-            println!("Please enter a city name or zip code: ");
+            println!(
+                "{}",
+                "Please enter a city name or zip code: ".bright_green()
+            );
             let mut input = String::new();
             io::stdin().read_line(&mut input).unwrap();
             let place_name = input.trim();
@@ -50,7 +60,11 @@ fn main() {
                 cache.update_place(&place);
                 break;
             } else {
-                println!("No places found with that name. Please try again.");
+                println!(
+                    "{}: \n{}",
+                    "No places found with that name".red(),
+                    "Please try again".red()
+                );
             }
         }
     }
