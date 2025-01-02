@@ -1,5 +1,6 @@
 use crate::models::place::Place;
 use crate::models::weather::Weather;
+use crate::utils::alphabet::ALPHANUMERIC;
 use colored::Colorize;
 use nanoid::nanoid;
 use serde::{Deserialize, Serialize};
@@ -16,7 +17,7 @@ pub struct Cache {
 impl Cache {
     fn new() -> Self {
         Self {
-            user_id: nanoid!(),
+            user_id: nanoid!(12, &ALPHANUMERIC),
             place: Place::default(),
             weather: Weather::default(),
         }
