@@ -1,5 +1,6 @@
 use crate::utils::alphabet::ALPHANUMERIC;
 use crate::utils::urls::OPENSTREETMAP_SEARCH_URL;
+use colored::Colorize;
 use nanoid::nanoid;
 use reqwest;
 use serde::{Deserialize, Serialize};
@@ -32,14 +33,17 @@ impl Place {
     }
 
     pub fn select(places: &[Place]) -> &Place {
-        println!("\nFound multiple places. Please select one:");
+        println!(
+            "{}",
+            "Found multiple places. Please select one:".bright_green()
+        );
 
         for (i, place) in places.iter().enumerate() {
             println!("{}. {}", i + 1, place.display_name.as_deref().unwrap_or(""));
         }
 
         loop {
-            print!("\nEnter number (1-{}): ", places.len());
+            print!("{}", "Enter number (1-{}): ".bright_green());
             io::stdout().flush().unwrap();
 
             let mut input = String::new();
@@ -50,7 +54,7 @@ impl Place {
                     return &places[selection - 1];
                 }
             }
-            println!("Invalid selection. Please try again.");
+            println!("{}", "Invalid selection. Please try again.".red());
         }
     }
 }

@@ -1,5 +1,6 @@
 use crate::models::place::Place;
 use crate::models::weather::Weather;
+use colored::Colorize;
 use nanoid::nanoid;
 use serde::{Deserialize, Serialize};
 use std::fs;
@@ -13,14 +14,22 @@ pub struct Cache {
 }
 
 impl Cache {
+    fn new() -> Self {
+        Self {
+            user_id: nanoid!(),
+            place: Place::default(),
+            weather: Weather::default(),
+        }
+    }
+
     pub fn load() -> Self {
         let cache_file = Self::get_cache_path();
 
         if cache_file.exists() {
             let contents = fs::read_to_string(&cache_file).unwrap_or_default();
-            serde_json::from_str(&contents).unwrap_or_else(|_| Self::init())
+            serde_json::from_str(&contents).unwrap_or_else(|_| Self::new())
         } else {
-            let cache = Self::init();
+            let cache = Self::new();
             cache.save();
             cache
         }
@@ -41,17 +50,10 @@ impl Cache {
         self.place.lon = place.lon.clone();
         self.save();
         println!(
-            "Cache updated: {}",
-            place.display_name.as_deref().unwrap_or("")
+            "{}: \n{}",
+            "Cache updated".bright_green(),
+            place.display_name.as_deref().unwrap_or("").blue()
         );
-    }
-
-    fn init() -> Self {
-        Self {
-            user_id: nanoid!(),
-            place: Place::default(),
-            weather: Weather::default(),
-        }
     }
 
     fn get_cache_path() -> PathBuf {
@@ -59,7 +61,7 @@ impl Cache {
             // On Windows, use %APPDATA% (typically C:\Users\Username\AppData\Roaming)
             dirs::config_dir().unwrap_or_else(|| PathBuf::from("."))
         } else {
-            // On Unix-like systems (Linux/macOS), use ~/.dailynews
+            // On Unix-like systems (Linux/macOS/BSD), use ~/.dailynews
             dirs::home_dir()
                 .map(|h| h.join(".dailynews"))
                 .unwrap_or_else(|| PathBuf::from("."))
