@@ -1,7 +1,6 @@
-use crate::utils::alphabet::ALPHANUMERIC;
+use crate::models::cfg::Cfg;
 use crate::utils::urls::OPENSTREETMAP_SEARCH_URL;
 use colored::Colorize;
-use nanoid::nanoid;
 use reqwest;
 use serde::{Deserialize, Serialize};
 use std::io::{self, Write};
@@ -24,7 +23,7 @@ impl Place {
             .get(&url)
             .header(
                 "User-Agent",
-                format!("DailyNews/1.0 User/{}", nanoid!(12, &ALPHANUMERIC)),
+                format!("DailyNews/1.0 User/{}", Cfg::new().user_id),
             )
             .send()?;
 

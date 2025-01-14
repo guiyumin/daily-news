@@ -1,3 +1,4 @@
+use crate::models::cfg::Cfg;
 use crate::models::place::Place;
 use crate::models::weather::Weather;
 use crate::utils::alphabet::ALPHANUMERIC;
@@ -58,21 +59,7 @@ impl Cache {
     }
 
     fn get_cache_path() -> PathBuf {
-        let base_path = if cfg!(windows) {
-            // On Windows, use %APPDATA% (typically C:\Users\Username\AppData\Roaming)
-            dirs::config_dir().unwrap_or_else(|| PathBuf::from("."))
-        } else {
-            // On Unix-like systems (Linux/macOS/BSD), use ~/.dailynews
-            dirs::home_dir()
-                .map(|h| h.join(".dailynews"))
-                .unwrap_or_else(|| PathBuf::from("."))
-        };
-
-        let mut path = base_path;
-        if cfg!(windows) {
-            path.push("dailynews"); // On Windows: AppData\Roaming\dailynews\
-        }
-        fs::create_dir_all(&path).unwrap_or_default();
+        let mut path = Cfg::new().dir;
         path.push("cache.json");
         path
     }
