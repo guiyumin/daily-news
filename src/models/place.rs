@@ -43,7 +43,8 @@ impl Place {
         }
 
         loop {
-            print!("{}", "Enter number (1-{}): ".bright_green());
+            let text = format!("Enter number (1-{})", places.len());
+            print!("{}", text.bright_green());
             io::stdout().flush().unwrap();
 
             let mut input = String::new();

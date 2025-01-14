@@ -53,7 +53,7 @@ impl Cache {
         println!(
             "{}: \n{}",
             "Cache updated".bright_green(),
-            place.display_name.as_deref().unwrap_or("").blue()
+            place.display_name.as_deref().unwrap_or("").bright_blue()
         );
     }
 

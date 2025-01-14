@@ -1,6 +1,10 @@
-use daily_news::services::place;
+use daily_news::services::{place, weather};
 
 fn main() {
     place::serve_place();
-    // Now you can use name and place_id for weather and news queries
+    let weather = weather::serve_weather();
+    match weather {
+        Ok(weather) => println!("{:?}", weather),
+        Err(e) => println!("Error: {}", e),
+    }
 }
